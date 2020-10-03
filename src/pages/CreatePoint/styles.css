@@ -205,3 +205,8 @@
 .error-input {
   border: 1px solid red !important;
 }
+
+.button-red {
+  background: red!important;
+  width: 100%!important;
+}

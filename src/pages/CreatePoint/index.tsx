@@ -13,7 +13,7 @@ import api from '../../services/api';
 
 import Dropzone from '../../components/Dropzone';
 import returnServer from '../../services/returnServer';
-import {isEmpty} from 'lodash'
+import { isEmpty } from 'lodash';
 
 interface Item {
   _id: string;
@@ -33,26 +33,24 @@ const CreatePoint = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    whatsapp: '',
+    whatsapp: ''
   });
 
   const [initialPosition, setInitialPosition] = useState<[number, number]>([
-    0,
-    0,
+    -27.547782, -48.497649
   ]);
 
   const [ufs, setUfs] = useState<string[]>([]);
   const [cities, setCities] = useState<string[]>([]);
   const [items, setItems] = useState<Item[]>([]);
 
-  const [selectedUf, setSelectedUf] = useState('0');
-  const [selectedCity, setSelectedCity] = useState('0');
+  const [selectedUf, setSelectedUf] = useState();
+  const [selectedCity, setSelectedCity] = useState();
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const [submit, setSubmit] = useState(true);
+  const [submit, setSubmit] = useState(false);
 
   const [selectedPosition, setSelectedPosition] = useState<[number, number]>([
-    0,
-    0,
+    -27.547782, -48.497649
   ]);
 
   const [selectedFile, setSelectedFile] = useState<File>();
@@ -72,8 +70,8 @@ const CreatePoint = () => {
       await api.get('/items').then((response) => {
         setItems(response.data);
       });
-    }
-    loud()
+    };
+    loud();
   }, []);
 
   useEffect(() => {
@@ -155,6 +153,12 @@ const CreatePoint = () => {
     const city = selectedCity;
     const [latitude, longitude] = selectedPosition;
     const items = selectedItems;
+    if (
+      isEmpty(name) || isEmpty(uf) || isEmpty(email) || isEmpty(whatsapp) || isEmpty(city)
+      || isEmpty(items)
+    ) {
+      return setSubmit(true);
+    }
 
     await api.post('/points', {
       image: await uploadImage(),
@@ -165,7 +169,7 @@ const CreatePoint = () => {
       city,
       latitude,
       longitude,
-      items,
+      items
     });
 
     alert('Ponto de coleta criado');
@@ -190,7 +194,7 @@ const CreatePoint = () => {
           ponto de coleta
         </h1>
 
-        <Dropzone onFileUploaded={setSelectedFile} />
+        <Dropzone submit={submit} onFileUploaded={setSelectedFile} />
 
         <fieldset>
           <legend>
@@ -223,7 +227,7 @@ const CreatePoint = () => {
               <label htmlFor="whatsapp">Whatsapp</label>
               <input
                 type="text"
-                className={submit && isEmpty(formData.whatsapp)? 'error-input' : ''}
+                className={submit && isEmpty(formData.whatsapp) ? 'error-input' : ''}
                 name="whatsapp"
                 id="whatsapp"
                 onChange={handleInputChange}
@@ -253,7 +257,7 @@ const CreatePoint = () => {
               <select
                 name="uf"
                 id="uf"
-                className={submit && isEmpty(selectedUf)? 'error-input' : ''}
+                className={submit && isEmpty(selectedUf) ? 'error-input' : ''}
                 value={selectedUf}
                 onChange={handleSelectUf}
               >
@@ -306,6 +310,11 @@ const CreatePoint = () => {
               </li>
             ))}
           </ul>
+          <div>
+            {
+              isEmpty(selectedItems) && submit ? <button className="button-red" type="button">Selecione um item</button> : null
+            }
+          </div>
         </fieldset>
 
         <button type="submit">Cadastrar ponto de coleta</button>

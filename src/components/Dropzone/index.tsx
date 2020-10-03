@@ -4,12 +4,14 @@ import { useDropzone } from 'react-dropzone';
 
 import { FiUpload } from 'react-icons/fi';
 import './styles.css';
+import {isEmpty} from 'lodash'
 
 interface Props {
   onFileUploaded: (file: File) => void;
+  submit: boolean;
 }
 
-const Dropzone: React.FC<Props> = ({ onFileUploaded }) => {
+const Dropzone: React.FC<Props> = ({ onFileUploaded, submit }) => {
   const [selectedFileUrl, setSelectedFileUrl] = useState('');
 
   const onDrop = useCallback(
@@ -36,7 +38,8 @@ const Dropzone: React.FC<Props> = ({ onFileUploaded }) => {
       {selectedFileUrl ? (
         <img src={selectedFileUrl} />
       ) : (
-        <p>
+        <p
+          className={submit && isEmpty(selectedFileUrl) ? 'error-input' : ''}>
           <FiUpload />
           Imagem do estabelecimento
         </p>
