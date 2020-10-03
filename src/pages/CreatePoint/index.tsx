@@ -12,9 +12,11 @@ import axios from 'axios';
 import api from '../../services/api';
 
 import Dropzone from '../../components/Dropzone';
+import returnServer from '../../services/returnServer';
+import {isEmpty} from 'lodash'
 
 interface Item {
-  id: number;
+  _id: string;
   title: string;
   image_url: string;
 }
@@ -45,7 +47,8 @@ const CreatePoint = () => {
 
   const [selectedUf, setSelectedUf] = useState('0');
   const [selectedCity, setSelectedCity] = useState('0');
-  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [submit, setSubmit] = useState(true);
 
   const [selectedPosition, setSelectedPosition] = useState<[number, number]>([
     0,
@@ -119,16 +122,29 @@ const CreatePoint = () => {
     setFormData({ ...formData, [name]: value });
   }
 
-  function handleSelectItem(id: number) {
-    const alreadySelected = selectedItems.findIndex((item) => item === id);
+  function handleSelectItem(_id: string) {
+    const alreadySelected = selectedItems.findIndex((item) => item === _id);
 
     if (alreadySelected >= 0) {
-      const filteredItems = selectedItems.filter((item) => item !== id);
+      const filteredItems = selectedItems.filter((item) => item !== _id);
 
       setSelectedItems(filteredItems);
     } else {
-      setSelectedItems([...selectedItems, id]);
+      setSelectedItems([...selectedItems, _id]);
     }
+  }
+
+  async function uploadImage() {
+    const data = new FormData();
+    if (!selectedFile) {
+      return null;
+    }
+
+    data.append('file', selectedFile);
+
+    const result = await api.post('/uploads', data);
+    return result?.data?.filename;
+
   }
 
   async function handleSubmit(event: FormEvent) {
@@ -140,22 +156,17 @@ const CreatePoint = () => {
     const [latitude, longitude] = selectedPosition;
     const items = selectedItems;
 
-    const data = new FormData();
-
-    data.append('name', name);
-    data.append('email', email);
-    data.append('whatsapp', whatsapp);
-    data.append('uf', uf);
-    data.append('city', city);
-    data.append('latitude', String(latitude));
-    data.append('longitude', String(longitude));
-    data.append('items', items.join(','));
-
-    if (selectedFile) {
-      data.append('image', selectedFile);
-    }
-
-    await api.post('/points', data);
+    await api.post('/points', {
+      image: await uploadImage(),
+      name,
+      email,
+      uf,
+      whatsapp,
+      city,
+      latitude,
+      longitude,
+      items,
+    });
 
     alert('Ponto de coleta criado');
 
@@ -192,6 +203,7 @@ const CreatePoint = () => {
               type="text"
               name="name"
               id="name"
+              className={submit && isEmpty(formData.name) ? 'error-input' : ''}
               onChange={handleInputChange}
             />
           </div>
@@ -202,6 +214,7 @@ const CreatePoint = () => {
               <input
                 type="email"
                 name="email"
+                className={submit && isEmpty(formData.email) ? 'error-input' : ''}
                 id="email"
                 onChange={handleInputChange}
               />
@@ -210,6 +223,7 @@ const CreatePoint = () => {
               <label htmlFor="whatsapp">Whatsapp</label>
               <input
                 type="text"
+                className={submit && isEmpty(formData.whatsapp)? 'error-input' : ''}
                 name="whatsapp"
                 id="whatsapp"
                 onChange={handleInputChange}
@@ -239,13 +253,14 @@ const CreatePoint = () => {
               <select
                 name="uf"
                 id="uf"
+                className={submit && isEmpty(selectedUf)? 'error-input' : ''}
                 value={selectedUf}
                 onChange={handleSelectUf}
               >
                 <option value="0">Selecione uma UF</option>
 
-                {ufs.map((uf) => (
-                  <option key={uf} value={uf}>
+                {ufs.map((uf, key) => (
+                  <option key={key} value={uf}>
                     {uf}
                   </option>
                 ))}
@@ -258,12 +273,13 @@ const CreatePoint = () => {
                 name="city"
                 id="city"
                 value={selectedCity}
+                className={submit && isEmpty(selectedCity) ? 'error-input' : ''}
                 onChange={handleSelectCity}
               >
                 <option value="0">Selecione uma cidade</option>
 
-                {cities.map((city) => (
-                  <option key={city} value={city}>
+                {cities.map((city, key) => (
+                  <option key={key} value={city}>
                     {city}
                   </option>
                 ))}
@@ -279,13 +295,13 @@ const CreatePoint = () => {
           </legend>
 
           <ul className="items-grid">
-            {items.map((item) => (
+            {items.map((item, key) => (
               <li
-                key={item.id}
-                className={selectedItems.includes(item.id) ? 'selected' : ''}
-                onClick={() => handleSelectItem(item.id)}
+                key={key}
+                className={selectedItems.includes(item._id) ? 'selected' : ''}
+                onClick={() => handleSelectItem(item._id)}
               >
-                <img src={item.image_url} alt={item.title} />
+                <img src={`${returnServer()}${item.image_url}`} alt={item.title} />
                 <span>{item.title}</span>
               </li>
             ))}

@@ -201,3 +201,7 @@
   background: #e1faec;
   border: 2px solid #34cb79;
 }
+
+.error-input {
+  border: 1px solid red !important;
+}
