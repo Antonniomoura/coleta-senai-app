@@ -31,3 +31,15 @@ h6 {
   color: var(--title-color);
   font-family: Ubuntu;
 }
+
+.d-flex {
+  display: flex!important;
+}
+
+.w-100 {
+  width: 100%!important;
+}
+
+.ml-2 {
+  margin-left: 1.5rem;
+}

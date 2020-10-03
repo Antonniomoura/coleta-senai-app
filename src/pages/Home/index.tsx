@@ -20,12 +20,17 @@ const Home = () => {
             Ajudamos pessoas a encontrarem pontos de coleta de forma eficiente.
           </p>
 
-          <Link to="/create-point">
+          <div className="d-flex">
+            <Link to="/create-point">
             <span>
               <FiLogIn />
             </span>
-            <strong>Cadastre um pronto de coleta</strong>
-          </Link>
+              <strong>Cadastre um pronto de coleta</strong>
+            </Link>
+            <Link to="/points" className="ml-2">
+              <strong>Status de coletas</strong>
+            </Link>
+          </div>
         </main>
       </div>
     </div>
