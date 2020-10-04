@@ -16,23 +16,25 @@ const Points = () => {
   const [items, setItems] = useState<Item[]>([]);
   const [points, setPoints] = useState([]);
 
-  useEffect(() => {
-    const loud = async () => {
-      await api.get('/items').then((response) => {
-        setItems(response.data);
-      });
-    };
-    loud();
-  }, []);
+  const load = async () => {
+    await api.get('/items').then((response) => {
+      setItems(response.data);
+    });
+
+    await api.get('points').then((response) => {
+      setPoints(response.data);
+    });
+  };
 
   useEffect(() => {
-    api.get('points')
-      .then((response) => {
-        setPoints(response.data);
-      });
+    load();
   }, []);
 
-  console.log(points);
+  async function changeStatus(_id, item) {
+    item.status = !item.status;
+    await api.put(`points/${_id}`, item);
+    await load();
+  }
 
   return (
     <div id="page-create-point" className="Points">
@@ -51,6 +53,17 @@ const Points = () => {
               {
                 key === 0 ? <h1>Lista de Pontos</h1> : null
               }
+              <div className="d-flex justify-content-end">
+                <button
+                  onClick={() => changeStatus(point._id, point)}
+                  type="button"
+                  className={point.status ? 'success-status' : 'success-error'}
+                >
+                  {
+                    point.status ? 'Recolhido' : 'Em Aberto'
+                  }
+                </button>
+              </div>
               <fieldset className="mt-2 main-point">
                 <legend>
                   <p>{point?.name}</p>
@@ -61,7 +74,6 @@ const Points = () => {
                   <div className="field">
                     <label>Cidade: {point?.city}</label>
                   </div>
-
                   <div className="field">
                     <label>Estado: {point?.uf}</label>
                   </div>

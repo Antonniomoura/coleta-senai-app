@@ -28,7 +28,7 @@
 
   form {
     margin: 20px auto !important;
-    padding: 25px 64px!important;
+    padding: 25px 64px !important;
     max-width: 730px;
     background: #fff;
     border-radius: 8px;
@@ -42,7 +42,7 @@
   }
 
   form fieldset {
-    margin-top: 0px!important;
+    margin-top: 0px !important;
     min-inline-size: auto;
     border: 0;
   }
@@ -52,7 +52,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px!important;
+    margin-bottom: 20px !important;
   }
 
   form legend h2 {
@@ -75,7 +75,7 @@
 
     display: flex;
     flex-direction: column;
-    margin-bottom: 10px!important;
+    margin-bottom: 10px !important;
   }
 
   form .field input[type='text'],
@@ -168,11 +168,19 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;
     list-style: none;
-    margin-bottom: 20px!important;
+    margin-bottom: 20px !important;
 
     img {
       max-width: 40px;
     }
+  }
+
+  .success-error {
+    background: #ff1217 !important;
+  }
+
+  .success-status {
+    background: #44f802 !important;
   }
 
   .items-grid li {
@@ -216,10 +224,10 @@
   }
 
   .main-point {
-    margin-top: 30px!important;
+    margin-top: 30px !important;
   }
 
-  .point-border{
-    border-bottom: 2px solid #6c6c80!important;
+  .point-border {
+    border-bottom: 2px solid #6c6c80 !important;
   }
 }
