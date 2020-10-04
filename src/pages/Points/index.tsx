@@ -61,8 +61,11 @@ const Points = () => {
                   <div className="field">
                     <label>Cidade: {point?.city}</label>
                   </div>
-                </div>
 
+                  <div className="field">
+                    <label>Estado: {point?.uf}</label>
+                  </div>
+                </div>
                 <div className="field-group">
                   <div className="field-group">
                     <div className="field">
