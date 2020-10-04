@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/logo.svg';
 import { FiArrowLeft } from 'react-icons/fi';
-import './styles.css';
+import './styles.scss';
 import api from '../../services/api';
 import returnServer from '../../services/returnServer';
 
@@ -32,8 +32,10 @@ const Points = () => {
       });
   }, []);
 
+  console.log(points);
+
   return (
-    <div id="page-create-point">
+    <div id="page-create-point" className="Points">
       <header>
         <img src={logo} alt="Ecoleta" />
 
@@ -49,49 +51,34 @@ const Points = () => {
               {
                 key === 0 ? <h1>Lista de Pontos</h1> : null
               }
-              <fieldset>
+              <fieldset className="mt-2 main-point">
                 <legend>
-                  <h2>Cod: </h2>
+                  <p>{point?.name}</p>
+                  <small>Cod: {point?._id}</small>
                 </legend>
-
-                <div className="field">
-                  <label htmlFor="name">Nome da entidade</label>
-                  <input
-                    type="text"
-                    name="name"
-                    id="name"
-                    disabled={true}
-                    value={point?.name}
-                  />
-                </div>
 
                 <div className="field-group">
                   <div className="field">
-                    <label htmlFor="email">E-mail</label>
-                    <input
-                      type="email"
-                      disabled={true}
-                      name="email"
-                      value={point?.email}
-                      id="email"
-                    />
+                    <label>Cidade: {point?.city}</label>
                   </div>
-                  <div className="field">
-                    <label htmlFor="whatsapp">Whatsapp</label>
-                    <input
-                      type="text"
-                      value={point?.whatsapp}
-                      name="whatsapp"
-                      disabled={true}
-                      id="whatsapp"
-                    />
+                </div>
+
+                <div className="field-group">
+                  <div className="field-group">
+                    <div className="field">
+                      <label>E-mail: {point?.email}</label>
+                    </div>
+                  </div>
+                  <div className="field-group">
+                    <div className="field">
+                      <label>Whatsapp: {point?.whatsapp}</label>
+                    </div>
                   </div>
                 </div>
               </fieldset>
-              <fieldset>
+              <fieldset className="point-border">
                 <legend>
-                  <h2>Itens de coleta</h2>
-                  <span>Selecione um ou mais itens abaixo</span>
+                  <h2>Itens da coleta</h2>
                 </legend>
 
                 <ul className="items-grid">
