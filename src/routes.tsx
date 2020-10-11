@@ -11,7 +11,7 @@ const Routes = () => {
       <Route component={Home} exact path="/" />
       <Route component={CreatePoint} path="/create-point" />
       <Route component={Points} path="/points" />
-      <Redirect from="/" to="/admin/dashboard" />
+      <Redirect from="/" to="/" />
     </BrowserRouter>
   );
 };
