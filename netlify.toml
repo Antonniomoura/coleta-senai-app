@@ -1,4 +1,4 @@
 [[redirects]]
-  from = "/create-point"
-  to = "/create-point"
+  from = "/*"
+  to = "/"
   status = 200
