@@ -67,7 +67,8 @@ const CreatePoint = () => {
 
   useEffect(() => {
     const loud = async () => {
-      await api.get('/items').then((response) => {
+      await api.get('items').then((response) => {
+        console.log(response.data)
         setItems(response.data);
       });
     };
@@ -140,7 +141,7 @@ const CreatePoint = () => {
 
     data.append('file', selectedFile);
 
-    const result = await api.post('/uploads', data);
+    const result = await api.post('uploads', data);
     return result?.data?.filename;
 
   }
@@ -160,7 +161,7 @@ const CreatePoint = () => {
       return setSubmit(true);
     }
 
-    await api.post('/points', {
+    await api.post('points', {
       image: await uploadImage(),
       name,
       email,
