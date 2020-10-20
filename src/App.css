@@ -1,3 +1,5 @@
+@import "./../node_modules/bootstrap-utilities/bootstrap-utilities.css";
+@import './../node_modules/react-toastify/dist/ReactToastify.css';
 :root {
   --primary-color: #34cb79;
   --title-color: #322153;

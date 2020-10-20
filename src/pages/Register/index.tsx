@@ -9,16 +9,14 @@ import { isEmpty } from 'lodash';
 import { toast, ToastContainer } from 'react-toastify';
 
 
-const Login = (props) => {
+const Register = (props) => {
 
   useEffect(() => {
-    autorized();
+    // autorized();
   }, []);
 
-  const [logged, setLogged] = useState(false);
-
   function error() {
-    return toast.error('🦄Error ao efetuar login!', {
+    return toast.error('🦄Error ao salvar!', {
       position: 'top-right',
       autoClose: 5000,
       hideProgressBar: false,
@@ -28,47 +26,34 @@ const Login = (props) => {
     });
   }
 
-  function setLogin() {
-
-  }
-
-  async function autorized() {
-    await api.get('api/me').then(success => {
-      setLogged(true);
-    }).catch(error => {
-      localStorage.clear();
-      return props.history.push(`/login`);
+  function success() {
+    return toast.success('🦄Usuario criado!', {
+      position: 'top-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true
     });
   }
 
-  function login() {
-    api.post('auth/login', { username: email, password }).then(data => {
-      if (data.data) {
-        const { token, code } = data.data;
-        localStorage.setItem('token', token);
-        localStorage.setItem('code', code);
-        window.location.replace('/admin/dashboard');
-      }
-      setLogin();
+  function saveUser() {
+    setSubmit(true);
+    if (!name || !email || !password) {
+
+    }
+    api.post('users', { name, email, password }).then(data => {
+      success();
+      props.history.push(`/login`);
     }).catch(err => {
       error();
     });
   }
 
-  if (logged) {
-    props.history.push(`/`);
-  }
-
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [submit, setSubmit] = useState(false);
-
-  function doLogin() {
-    setSubmit(true);
-    if (!email || !password) {
-      return null;
-    }
-  }
 
   const history = useHistory();
 
@@ -90,16 +75,33 @@ const Login = (props) => {
 
   return (
     <div id="page-create-point">
-      <ToastContainer/>
+      <ToastContainer />
       <form onSubmit={handleSubmit} autoComplete="off">
         <header>
           <img src={logo} alt="Ecoleta" className="mb-5" />
         </header>
 
-        <fieldset>
+        <fieldset className="mb-2">
           <legend>
-            <h2>Login</h2>
+            <h2>Registrar</h2>
           </legend>
+          <div className="field-group">
+            <div className="field">
+              <label htmlFor="email">Name</label>
+              <input
+                type="text"
+                name="name"
+                className={submit && isEmpty(email) ? 'error-input' : ''}
+                id="name"
+                value={name}
+                onChange={event => {
+                  setName(event.target.value);
+                }}
+              />
+            </div>
+          </div>
+        </fieldset>
+        <fieldset>
           <div className="field-group">
             <div className="field">
               <label htmlFor="email">E-mail</label>
@@ -115,7 +117,6 @@ const Login = (props) => {
               />
             </div>
           </div>
-
         </fieldset>
         <fieldset className="mt-2">
           <div className="field">
@@ -134,14 +135,14 @@ const Login = (props) => {
         </fieldset>
         <div className="d-flex justify-content-end">
 
-          <Link to="/register" className="ml-2">
-            <button type="button" className="btn btn-primary mr-2">Registrar</button>
+          <Link to="/login" className="ml-2">
+            <button type="button" className="btn btn-primary mr-2">Login</button>
           </Link>
-          <button type="button" onClick={login}>Fazer Login</button>
+          <button type="button" onClick={saveUser}>Registrar</button>
         </div>
       </form>
     </div>
   );
 };
 
-export default Login;
+export default Register;

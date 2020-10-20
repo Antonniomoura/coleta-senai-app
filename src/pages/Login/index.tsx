@@ -1,40 +1,147 @@
-import React from 'react';
-import { FiLogIn } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
-
+import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import logo from '../../assets/logo.svg';
 import './styles.css';
 
-import logo from '../../assets/logo.svg';
+import api from '../../services/api';
 
-const Home = () => {
+import { isEmpty } from 'lodash';
+import { toast, ToastContainer } from 'react-toastify';
+
+
+const Login = (props) => {
+
+  useEffect(() => {
+    autorized();
+  }, []);
+
+  const [logged, setLogged] = useState(false);
+
+  function error() {
+    return toast.error('🦄Error ao efetuar login!', {
+      position: 'top-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true
+    });
+  }
+
+  function setLogin() {
+
+  }
+
+  async function autorized() {
+    await api.get('api/me').then(success => {
+      setLogged(true);
+    }).catch(error => {
+      localStorage.clear();
+      return props.history.push(`/login`);
+    });
+  }
+
+  function login() {
+    api.post('auth/login', { username: email, password }).then(data => {
+      if (data.data) {
+        const { token, code } = data.data;
+        localStorage.setItem('token', token);
+        localStorage.setItem('code', code);
+        window.location.replace('/admin/dashboard');
+      }
+      setLogin();
+    }).catch(err => {
+      error();
+    });
+  }
+
+  if (logged) {
+    props.history.push(`/`);
+  }
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [submit, setSubmit] = useState(false);
+
+  function doLogin() {
+    setSubmit(true);
+    if (!email || !password) {
+      return null;
+    }
+  }
+
+  const history = useHistory();
+
+  useEffect(() => {
+  }, []);
+
+  async function handleSubmit(event: FormEvent) {
+    event.preventDefault();
+
+    await api.post('points', {
+      email,
+      password
+    });
+
+    alert('Ponto de coleta criado');
+
+    history.push('/');
+  }
+
   return (
-    <div id="page-home">
-      <div className="content">
+    <div id="page-create-point">
+      <ToastContainer/>
+      <form onSubmit={handleSubmit} autoComplete="off">
         <header>
-          <img src={logo} alt="Ecoleta" />
+          <img src={logo} alt="Ecoleta" className="mb-5" />
         </header>
 
-        <main>
-          <h1>Seu marketplace de coleta de resíduos.</h1>
-          <p>
-            Ajudamos pessoas a encontrarem pontos de coleta de forma eficiente.
-          </p>
-
-          <div className="d-flex">
-            <Link to="/create-point">
-            <span>
-              <FiLogIn />
-            </span>
-              <strong>Cadastre um pronto de coleta</strong>
-            </Link>
-            <Link to="/points" className="ml-2">
-              <strong>Status de coletas</strong>
-            </Link>
+        <fieldset>
+          <legend>
+            <h2>Login</h2>
+          </legend>
+          <div className="field-group">
+            <div className="field">
+              <label htmlFor="email">E-mail</label>
+              <input
+                type="email"
+                name="email"
+                className={submit && isEmpty(email) ? 'error-input' : ''}
+                id="email"
+                value={email}
+                onChange={event => {
+                  setEmail(event.target.value);
+                }}
+              />
+            </div>
           </div>
-        </main>
-      </div>
+
+        </fieldset>
+        <fieldset className="mt-2">
+          <div className="field">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              className={submit && isEmpty(password) ? 'error-input' : ''}
+              name="password"
+              id="password"
+              value={password}
+              onChange={event => {
+                setPassword(event.target.value);
+              }}
+            />
+          </div>
+        </fieldset>
+        <div className="d-flex justify-content-end">
+
+          <Link to="/register" className="ml-2">
+            <button type="button" className="btn btn-primary mr-2">Registrar</button>
+          </Link>
+          <button type="button" onClick={login}>Fazer Login</button>
+        </div>
+      </form>
     </div>
   );
 };
 
-export default Home;
+export default Login;
