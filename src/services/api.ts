@@ -8,7 +8,8 @@ function token() {
 const api = axios.create({
   baseURL: returnServer(),
   headers: {
-    Authorization: `Bearer ${token()}`
+    Authorization: `Bearer ${token()}`,
+    code: localStorage.getItem('code')
   }
 });
 

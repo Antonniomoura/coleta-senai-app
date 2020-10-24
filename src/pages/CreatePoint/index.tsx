@@ -48,6 +48,7 @@ const CreatePoint = () => {
   const [selectedCity, setSelectedCity] = useState();
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [submit, setSubmit] = useState(false);
+  const [userId, setUserId] = useState(localStorage.getItem('code'));
 
   const [selectedPosition, setSelectedPosition] = useState<[number, number]>([
     -27.547782, -48.497649
@@ -68,7 +69,7 @@ const CreatePoint = () => {
   useEffect(() => {
     const loud = async () => {
       await api.get('items').then((response) => {
-        console.log(response.data)
+        console.log(response.data);
         setItems(response.data);
       });
     };
@@ -170,7 +171,8 @@ const CreatePoint = () => {
       city,
       latitude,
       longitude,
-      items
+      items,
+      userId
     });
 
     alert('Ponto de coleta criado');
@@ -213,7 +215,7 @@ const CreatePoint = () => {
             />
           </div>
 
-          <div className="field-group">
+          <div className="field-group mt-2">
             <div className="field">
               <label htmlFor="email">E-mail</label>
               <input
@@ -237,20 +239,11 @@ const CreatePoint = () => {
           </div>
         </fieldset>
 
-        <fieldset>
+        <fieldset className="mt-2">
           <legend>
             <h2>Endereço</h2>
             <span>Selecione o endereço no mapa</span>
           </legend>
-
-          <Map center={initialPosition} zoom={15} onClick={handleMapClick}>
-            <TileLayer
-              attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-
-            <Marker position={selectedPosition} />
-          </Map>
 
           <div className="field-group">
             <div className="field">
@@ -313,7 +306,8 @@ const CreatePoint = () => {
           </ul>
           <div>
             {
-              isEmpty(selectedItems) && submit ? <button className="button-red" type="button">Selecione um item</button> : null
+              isEmpty(selectedItems) && submit ?
+                <button className="button-red" type="button">Selecione um item</button> : null
             }
           </div>
         </fieldset>
