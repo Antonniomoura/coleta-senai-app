@@ -5,15 +5,13 @@ import { Link } from 'react-router-dom';
 import './styles.css';
 
 import logo from '../../assets/logo.svg';
+import Header from '../../components/Header/header';
 
 const Home = () => {
   return (
     <div id="page-home">
       <div className="content">
-        <header>
-          <img src={logo} alt="Ecoleta" />
-        </header>
-
+        <Header />
         <main>
           <h1>Seu marketplace de coleta de resíduos.</h1>
           <p>
