@@ -45,6 +45,7 @@ const CreatePoint = () => {
     const [selectedItems, setSelectedItems] = useState<string[]>([]);
     const [submit, setSubmit] = useState(false);
     const [userId, setUserId] = useState(localStorage.getItem('code'));
+    const [loading, setLoading] = useState(false);
 
     const [selectedPosition, setSelectedPosition] = useState<[number, number]>([
         -27.547782, -48.497649
@@ -105,12 +106,18 @@ const CreatePoint = () => {
     }
 
     function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
+        if (loading) {
+            return;
+        }
         const { name, value } = event.target;
 
         setFormData({ ...formData, [name]: value });
     }
 
     function handleSelectItem(_id: string) {
+        if (loading) {
+            return;
+        }
         const alreadySelected = selectedItems.findIndex((item) => item === _id);
 
         if (alreadySelected >= 0) {
@@ -137,7 +144,7 @@ const CreatePoint = () => {
 
     async function handleSubmit(event: FormEvent) {
         event.preventDefault();
-
+        setLoading(true);
         const { name, email, whatsapp } = formData;
         const uf = selectedUf;
         const city = selectedCity;
@@ -151,7 +158,7 @@ const CreatePoint = () => {
         }
 
         await api.post('points', {
-            image: await uploadImage(),
+            image: 'null',
             name,
             email,
             uf,
@@ -161,6 +168,8 @@ const CreatePoint = () => {
             longitude,
             items,
             userId
+        }).finally(() => {
+            setLoading(true);
         });
 
         alert('Ponto de coleta criado');
@@ -193,6 +202,7 @@ const CreatePoint = () => {
                         <label htmlFor="name">Nome da entidade</label>
                         <input
                             type="text"
+                            disabled={loading}
                             name="name"
                             id="name"
                             className={submit && isEmpty(formData.name) ? 'error-input' : ''}
@@ -209,6 +219,7 @@ const CreatePoint = () => {
                                 className={submit && isEmpty(formData.email) ? 'error-input' : ''}
                                 id="email"
                                 onChange={handleInputChange}
+                                disabled={loading}
                             />
                         </div>
                         <div className="field">
@@ -219,6 +230,7 @@ const CreatePoint = () => {
                                 name="whatsapp"
                                 id="whatsapp"
                                 onChange={handleInputChange}
+                                disabled={loading}
                             />
                         </div>
                     </div>
@@ -236,6 +248,7 @@ const CreatePoint = () => {
                             <select
                                 name="uf"
                                 id="uf"
+                                disabled={loading}
                                 className={submit && isEmpty(selectedUf) ? 'error-input' : ''}
                                 value={selectedUf}
                                 onChange={handleSelectUf}
@@ -256,6 +269,7 @@ const CreatePoint = () => {
                                 name="city"
                                 id="city"
                                 value={selectedCity}
+                                disabled={loading}
                                 className={submit && isEmpty(selectedCity) ? 'error-input' : ''}
                                 onChange={handleSelectCity}
                             >
@@ -296,8 +310,10 @@ const CreatePoint = () => {
                         }
                     </div>
                 </fieldset>
-
-                <button type="submit">Cadastrar ponto de coleta</button>
+                {
+                    loading ? <button type="button">Cadastrando...</button> :
+                        <button type="submit">Cadastrar ponto de coleta</button>
+                }
             </form>
         </div>
     );

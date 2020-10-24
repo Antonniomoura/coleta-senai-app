@@ -67,16 +67,6 @@ const Points = () => {
     }));
   }
 
-  function returnTitle(quantity) {
-    if (currentItem === 1) {
-      return `Meus Items (${quantity})`;
-    }
-    if (currentItem === 2) {
-      return `Meus Coletados (${quantity})`;
-    }
-    return `Items Para Coleta (${quantity})`;
-  };
-
   return (
     <div id="page-create-point" className="Points">
       <header>
@@ -165,7 +155,7 @@ const Points = () => {
                         className={point.status ? 'success-status m-0' : 'success-error m-0'}
                       >
                         {
-                          point.status ? 'Recolhido' : 'Recolher'
+                          point.status ? 'Coletado' : 'Coletar'
                         }
                       </button>
                     </div> : <div className="w-100 button-recolher justify-content-end">
