@@ -42,6 +42,7 @@ const Points = () => {
     await api.put(`points/${_id}`, item);
     await load();
   }
+
   async function deleteItem(_id) {
     await api.delete(`points/${_id}`);
     await load();
@@ -79,7 +80,9 @@ const Points = () => {
   return (
     <div id="page-create-point" className="Points">
       <header>
-        <img src={logo} alt="Ecoleta" />
+        <Link to="/">
+          <img src={logo} alt="Ecoleta" />
+        </Link>
 
         <Link to="/">
           <FiArrowLeft />
@@ -115,83 +118,70 @@ const Points = () => {
         </div>
         {
           pointsToRender && pointsToRender.length > 0 ? pointsToRender.map((point: any, key) => {
-            console.log(point.items.includes(2))
-            console.log(items)
-            return <div key={key}>
-              {
-                key === 0 ?
-                  <h2 className="mt-1">
-                    {returnTitle(pointsToRender.length)}
-                  </h2> : null
-              }
-              {
-                currentItem !== 1 ? <div className="d-flex justify-content-end">
-                  <button
-                    onClick={() => changeStatus(point._id, point)}
-                    type="button"
-                    className={point.status ? 'success-status' : 'success-error'}
-                  >
-                    {
-                      point.status ? 'Recolhido' : 'Recolher'
-                    }
-                  </button>
-                </div> : <div className="d-flex justify-content-start">
-                  <button
-                    onClick={() => deleteItem(point._id)}
-                    type="button"
-                    className={'success-error'}
-                  >
-                    Remover
-                  </button>
-                </div>
-              }
-              <fieldset className="mt-2 main-point">
-                <legend>
-                  <p>{point?.name}</p>
-                  <small>Cod: {point?._id}</small>
-                </legend>
+              console.log(point.items.includes(2));
+              console.log(items);
+              return <div key={key}>
+                <fieldset className="point-border point-coletados">
+                  <legend>
+                    <h2>Itens para coleta ({key + 1})</h2>
+                  </legend>
 
-                <div className="field-group">
-                  <div className="field">
-                    <label>Cidade: {point?.city}</label>
-                  </div>
-                  <div className="field">
-                    <label>Estado: {point?.uf}</label>
-                  </div>
-                </div>
-                <div className="field-group">
-                  <div className="field-group">
-                    <div className="field">
-                      <label>E-mail: {point?.email}</label>
+                  <ul className="items-grid">
+                    {items.map((item, key) => (
+                      <li
+                        key={key}
+                        className={point?.items.includes(item._id) ? 'selected' : ''}
+                      >
+                        <img src={`${returnServer()}${item.image_url}`} alt={item.title} />
+                        <small>{item.title}</small>
+                      </li>
+                    ))}
+                  </ul>
+                </fieldset>
+                <fieldset className="m-0 p-0 mt-2 main-point d-flex">
+                  <div className="w-100">
+                    <div className="field m-0">
+                      <p className="m-0 p-0">{point?.name}</p>
+                      <small>Cod: {point?._id}</small>
+                    </div>
+                    <div className="field m-0">
+                      <p className="m-0 p-0">Cidade: {point?.city}</p>
+                    </div>
+                    <div className="field m-0">
+                      <p className="m-0 p-0">Estado: {point?.uf}</p>
+                    </div>
+                    <div className="field m-0">
+                      <p className="m-0 p-0">E-mail: {point?.email}</p>
+                    </div>
+                    <div className="field m-0">
+                      <p className="m-0 p-0">Whatsapp: {point?.whatsapp}</p>
                     </div>
                   </div>
-                  <div className="field-group">
-                    <div className="field">
-                      <label>Whatsapp: {point?.whatsapp}</label>
+                  {
+                    currentItem !== 1 ? <div className="w-100 button-recolher justify-content-end">
+                      <button
+                        onClick={() => changeStatus(point._id, point)}
+                        type="button"
+                        className={point.status ? 'success-status m-0' : 'success-error m-0'}
+                      >
+                        {
+                          point.status ? 'Recolhido' : 'Recolher'
+                        }
+                      </button>
+                    </div> : <div className="w-100 button-recolher justify-content-end">
+                      <button
+                        onClick={() => deleteItem(point._id)}
+                        type="button"
+                        className={'success-error'}
+                      >
+                        Remover
+                      </button>
                     </div>
-                  </div>
-                </div>
-              </fieldset>
-              <fieldset className="point-border">
-                <legend>
-                  <h2>Itens da coleta</h2>
-                </legend>
-
-                <ul className="items-grid">
-                  {items.map((item, key) => (
-                    <li
-                      key={key}
-                      className={point?.items.includes(item._id) ? 'selected' : ''}
-                    >
-                      <img src={`${returnServer()}${item.image_url}`} alt={item.title} />
-                      <span>{item.title}</span>
-                    </li>
-                  ))}
-                </ul>
-              </fieldset>
-            </div>;
-          }
-        ) : <p className="mt-2">Lista Vazia</p>
+                  }
+                </fieldset>
+              </div>;
+            }
+          ) : <p className="mt-2">Lista Vazia</p>
         }
       </form>
     </div>

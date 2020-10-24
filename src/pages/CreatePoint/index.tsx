@@ -183,7 +183,10 @@ const CreatePoint = () => {
   return (
     <div id="page-create-point">
       <header>
-        <img src={logo} alt="Ecoleta" />
+
+        <Link to="/">
+          <img src={logo} alt="Ecoleta" />
+        </Link>
 
         <Link to="/">
           <FiArrowLeft />
