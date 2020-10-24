@@ -1,0 +1,10 @@
+#page-create-point form fieldset {
+  margin-top: 0px;
+}
+#page-create-point form .field {
+  margin-bottom: 0px;
+}
+
+#page-create-point form {
+  padding: 19px;
+}
