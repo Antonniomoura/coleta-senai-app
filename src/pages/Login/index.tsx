@@ -44,10 +44,9 @@ const Login = (props) => {
   function login() {
     api.post('auth/login', { username: email, password }).then(data => {
       if (data.data) {
-        const { token, code } = data.data;
+        const { token } = data.data;
         localStorage.setItem('token', token);
-        localStorage.setItem('code', code);
-        window.location.replace('/admin/dashboard');
+        window.location.replace('/');
       }
       setLogin();
     }).catch(err => {
