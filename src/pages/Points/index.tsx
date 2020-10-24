@@ -5,16 +5,13 @@ import { FiArrowLeft } from 'react-icons/fi';
 import './styles.scss';
 import api from '../../services/api';
 import returnServer from '../../services/returnServer';
-
-interface Item {
-  _id: string;
-  title: string;
-  image_url: string;
-}
+import { Item } from '../../interfaces/item.interface';
 
 const Points = () => {
   const [items, setItems] = useState<Item[]>([]);
   const [points, setPoints] = useState([]);
+  const [pointsToRender, setPointsToRender] = useState([]);
+  const [currentItem, setCurrentItem] = useState(3);
 
   const load = async () => {
     await api.get('items').then((response) => {
@@ -30,11 +27,54 @@ const Points = () => {
     load();
   }, []);
 
+  useEffect(() => {
+    balanceItems();
+  }, [points, currentItem]);
+
   async function changeStatus(_id, item) {
+    console.log(item.status);
+    if (!item.status) {
+      item.byUserId = localStorage.getItem('code');
+    } else {
+      item.byUserId = null;
+    }
     item.status = !item.status;
     await api.put(`points/${_id}`, item);
     await load();
   }
+  async function deleteItem(_id) {
+    await api.delete(`points/${_id}`);
+    await load();
+  }
+
+  function balanceItems() {
+    const code = localStorage.getItem('code');
+    if (currentItem === 1) {
+      return setPointsToRender(points.filter((point: any) => {
+        return point.userId === code;
+      }));
+    }
+
+    if (currentItem === 2) {
+      return setPointsToRender(points.filter((point: any) => {
+        return point.userId !== code && point.byUserId === code && point.status;
+      }));
+    }
+
+    return setPointsToRender(points.filter((point: any) => {
+      return point.userId !== code && !point.status;
+    }));
+  }
+
+  function returnTitle(quantity) {
+    if (currentItem === 1) {
+      return `Meus Items (${quantity})`;
+    }
+    if (currentItem === 2) {
+      return `Meus Coletados (${quantity})`;
+    }
+    return `Items Para Coleta (${quantity})`;
+  };
 
   return (
     <div id="page-create-point" className="Points">
@@ -46,70 +86,112 @@ const Points = () => {
           Voltar para home
         </Link>
       </header>
-
       <form>
+        <div className="point-border">
+          <ul className="items-grid">
+
+            <li
+              onClick={() => {
+                setCurrentItem(3);
+              }}
+              className={currentItem === 3 ? 'selected' : ''}
+            >
+              <span>Para coleta</span>
+            </li>
+            <li onClick={() => {
+              setCurrentItem(1);
+            }} className={currentItem === 1 ? 'selected' : ''}
+            >
+              <span>Meus Itens</span>
+            </li>
+            <li onClick={() => {
+              setCurrentItem(2);
+            }}
+                className={currentItem === 2 ? 'selected' : ''}
+            >
+              <span>Coletados</span>
+            </li>
+          </ul>
+        </div>
         {
-          points.map((point: any, key) => <div key={key}>
-            {
-              key === 0 ? <h1>Lista de Pontos</h1> : null
-            }
-            <div className="d-flex justify-content-end">
-              <button
-                onClick={() => changeStatus(point._id, point)}
-                type="button"
-                className={point.status ? 'success-status' : 'success-error'}
-              >
-                {
-                  point.status ? 'Recolhido' : 'Em Aberto'
-                }
-              </button>
-            </div>
-            <fieldset className="mt-2 main-point">
-              <legend>
-                <p>{point?.name}</p>
-                <small>Cod: {point?._id}</small>
-              </legend>
-
-              <div className="field-group">
-                <div className="field">
-                  <label>Cidade: {point?.city}</label>
-                </div>
-                <div className="field">
-                  <label>Estado: {point?.uf}</label>
-                </div>
-              </div>
-              <div className="field-group">
-                <div className="field-group">
-                  <div className="field">
-                    <label>E-mail: {point?.email}</label>
-                  </div>
-                </div>
-                <div className="field-group">
-                  <div className="field">
-                    <label>Whatsapp: {point?.whatsapp}</label>
-                  </div>
-                </div>
-              </div>
-            </fieldset>
-            <fieldset className="point-border">
-              <legend>
-                <h2>Itens da coleta</h2>
-              </legend>
-
-              <ul className="items-grid">
-                {items.map((item, key) => (
-                  <li
-                    key={key}
-                    className={point?.items.includes(item._id) ? 'selected' : ''}
+          pointsToRender && pointsToRender.length > 0 ? pointsToRender.map((point: any, key) => {
+            console.log(point.items.includes(2))
+            console.log(items)
+            return <div key={key}>
+              {
+                key === 0 ?
+                  <h2 className="mt-1">
+                    {returnTitle(pointsToRender.length)}
+                  </h2> : null
+              }
+              {
+                currentItem !== 1 ? <div className="d-flex justify-content-end">
+                  <button
+                    onClick={() => changeStatus(point._id, point)}
+                    type="button"
+                    className={point.status ? 'success-status' : 'success-error'}
                   >
-                    <img src={`${returnServer()}${item.image_url}`} alt={item.title} />
-                    <span>{item.title}</span>
-                  </li>
-                ))}
-              </ul>
-            </fieldset>
-          </div>
-          )
+                    {
+                      point.status ? 'Recolhido' : 'Recolher'
+                    }
+                  </button>
+                </div> : <div className="d-flex justify-content-start">
+                  <button
+                    onClick={() => deleteItem(point._id)}
+                    type="button"
+                    className={'success-error'}
+                  >
+                    Remover
+                  </button>
+                </div>
+              }
+              <fieldset className="mt-2 main-point">
+                <legend>
+                  <p>{point?.name}</p>
+                  <small>Cod: {point?._id}</small>
+                </legend>
+
+                <div className="field-group">
+                  <div className="field">
+                    <label>Cidade: {point?.city}</label>
+                  </div>
+                  <div className="field">
+                    <label>Estado: {point?.uf}</label>
+                  </div>
+                </div>
+                <div className="field-group">
+                  <div className="field-group">
+                    <div className="field">
+                      <label>E-mail: {point?.email}</label>
+                    </div>
+                  </div>
+                  <div className="field-group">
+                    <div className="field">
+                      <label>Whatsapp: {point?.whatsapp}</label>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+              <fieldset className="point-border">
+                <legend>
+                  <h2>Itens da coleta</h2>
+                </legend>
+
+                <ul className="items-grid">
+                  {items.map((item, key) => (
+                    <li
+                      key={key}
+                      className={point?.items.includes(item._id) ? 'selected' : ''}
+                    >
+                      <img src={`${returnServer()}${item.image_url}`} alt={item.title} />
+                      <span>{item.title}</span>
+                    </li>
+                  ))}
+                </ul>
+              </fieldset>
+            </div>;
+          }
+        ) : <p className="mt-2">Lista Vazia</p>
         }
       </form>
     </div>

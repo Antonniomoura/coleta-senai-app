@@ -44,8 +44,9 @@ const Login = (props) => {
   function login() {
     api.post('auth/login', { username: email, password }).then(data => {
       if (data.data) {
-        const { token } = data.data;
+        const { token, code } = data.data;
         localStorage.setItem('token', token);
+        localStorage.setItem('code', code);
         window.location.replace('/');
       }
       setLogin();
@@ -134,7 +135,7 @@ const Login = (props) => {
         <div className="d-flex justify-content-end">
 
           <Link to="/register" className="ml-2">
-            <button type="button" className="btn btn-primary mr-2">Registrar</button>
+            <button type="button" className="btn btn-primary mr-2 button-secudary">Criar Conta</button>
           </Link>
           <button type="button" onClick={login}>Fazer Login</button>
         </div>

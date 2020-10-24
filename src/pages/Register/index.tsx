@@ -136,7 +136,7 @@ const Register = (props) => {
         <div className="d-flex justify-content-end">
 
           <Link to="/login" className="ml-2">
-            <button type="button" className="btn btn-primary mr-2">Login</button>
+            <button type="button" className="btn btn-primary mr-2 button-secudary">Ir para Login</button>
           </Link>
           <button type="button" onClick={saveUser}>Registrar</button>
         </div>
