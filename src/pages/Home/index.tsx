@@ -21,7 +21,7 @@ const Home = () => {
           </p>
 
           <div className="d-flex">
-            <Link to="/create-point">
+            <Link to="/create-point" className="button-secudary">
             <span>
               <FiLogIn />
             </span>

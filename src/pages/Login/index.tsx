@@ -134,7 +134,7 @@ const Login = (props) => {
         <div className="d-flex justify-content-end">
 
           <Link to="/register" className="ml-2">
-            <button type="button" className="btn btn-primary mr-2">Registrar</button>
+            <button type="button" className="btn btn-primary mr-2 button-secudary">Criar Conta</button>
           </Link>
           <button type="button" onClick={login}>Fazer Login</button>
         </div>
